@@ -2,309 +2,2008 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ARKANE AI · Liquid Context Architecture</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#0A1B2F">
+<meta name="description" content="بنية السياق السائل — محاكاة تفاعلية للمعمارية العربية الأصلية للذكاء الاصطناعي السيادي">
+<title>LCA · Liquid Context Architecture — محاكاة تفاعلية</title>
+
+<!-- Fonts: system stack only, no external deps -->
+<style id="font-stack">
+@font-face{font-family:'TajawalLocal';src:local('Tajawal'),local('IBM Plex Sans Arabic'),local('Geeza Pro'),local('SF Arabic'),local('-apple-system');font-display:swap}
+</style>
+
 <style>
+/* =================== TOKENS =================== */
 :root{
-  --navy:#0B1B2B;
-  --navy-2:#102538;
-  --gold:#C9A961;
-  --teal:#5BA5A0;
-  --cream:#F5F1E8;
-  --line:rgba(201,169,97,.25);
+  --navy-900:#0A1B2F;
+  --navy-800:#0F2745;
+  --navy-700:#163055;
+  --navy-600:#1F3A66;
+  --navy-500:#2D4D7F;
+  --gold-600:#A8821F;
+  --gold-500:#C49A2B;
+  --gold-400:#D4AD3F;
+  --gold-300:#E8C66E;
+  --gold-200:#F2DCA0;
+  --teal-700:#1A6F7B;
+  --teal-600:#1F8A98;
+  --teal-500:#2BA4B2;
+  --teal-400:#31C9DA;
+  --cyan-300:#67DDE9;
+  --crimson:#C53030;
+  --ink:#0E1116;
+  --ink-2:#1A2330;
+  --paper:#FAF8F3;
+  --paper-2:#F4F0E6;
+  --paper-3:#EAE3D2;
+  --line:rgba(15,39,69,.12);
+  --line-strong:rgba(15,39,69,.25);
+  --shadow-sm:0 1px 2px rgba(10,27,47,.06), 0 1px 1px rgba(10,27,47,.04);
+  --shadow-md:0 4px 12px rgba(10,27,47,.08), 0 2px 4px rgba(10,27,47,.04);
+  --shadow-lg:0 16px 40px rgba(10,27,47,.14), 0 4px 12px rgba(10,27,47,.06);
+  --shadow-xl:0 32px 80px rgba(10,27,47,.20), 0 12px 32px rgba(10,27,47,.10);
+
+  --f-display:-apple-system,'SF Arabic','Geeza Pro','Tajawal','IBM Plex Sans Arabic',system-ui,sans-serif;
+  --f-body:-apple-system,'SF Arabic','Geeza Pro','Tajawal','IBM Plex Sans Arabic',system-ui,sans-serif;
+  --f-serif:Georgia,'Times New Roman',serif;
+  --f-mono:ui-monospace,'SF Mono','Menlo','Consolas',monospace;
 }
-*{margin:0;padding:0;box-sizing:border-box}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 body{
-  font-family:'IBM Plex Sans Arabic',sans-serif;
-  background:var(--navy);
-  color:var(--cream);
-  line-height:1.7;
-  min-height:100vh;
-}
-.container{max-width:880px;margin:0 auto;padding:48px 24px 80px}
-
-.brand{
-  font-family:'Cormorant Garamond',serif;
-  letter-spacing:.4em;
-  font-size:13px;
-  color:var(--gold);
-  text-align:center;
-  margin-bottom:32px;
-}
-.title{
-  font-size:42px;
-  font-weight:600;
-  text-align:center;
-  margin-bottom:8px;
-  line-height:1.3;
-}
-.subtitle-en{
-  font-family:'Cormorant Garamond',serif;
-  letter-spacing:.25em;
-  font-size:14px;
-  color:var(--teal);
-  text-align:center;
-  margin-bottom:20px;
-}
-.tagline{
-  font-size:15px;
-  color:var(--teal);
-  text-align:center;
-  margin-bottom:48px;
-  font-weight:300;
-}
-.divider{
-  width:60px;
-  height:2px;
-  background:var(--gold);
-  margin:0 auto 56px;
+  margin:0;
+  font-family:var(--f-body);
+  background:var(--paper);
+  color:var(--ink);
+  line-height:1.65;
+  font-weight:400;
+  font-size:16px;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
 }
 
-.intro{
-  background:var(--navy-2);
-  border:1px solid var(--line);
-  border-radius:8px;
-  padding:28px;
-  margin-bottom:48px;
-  font-size:15px;
-  line-height:1.9;
+/* paper texture */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:-1;
+  background-image:
+    radial-gradient(circle at 20% 10%, rgba(196,154,43,.04), transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(31,138,152,.04), transparent 40%);
 }
-.intro p{margin-bottom:12px}
-.intro p:last-child{margin-bottom:0}
-.highlight{color:var(--gold);font-weight:500}
 
-.stats{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:16px;
-  margin-bottom:56px;
+/* selection */
+::selection{background:var(--gold-300);color:var(--navy-900)}
+
+/* =================== LAYOUT =================== */
+.container{max-width:1280px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+.narrow{max-width:880px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+
+/* =================== NAV =================== */
+nav.top{
+  position:sticky;top:0;z-index:100;
+  background:rgba(250,248,243,.85);
+  backdrop-filter:blur(20px) saturate(180%);
+  -webkit-backdrop-filter:blur(20px) saturate(180%);
+  border-bottom:1px solid var(--line);
 }
-.stat{
-  background:var(--navy-2);
-  border:1px solid var(--line);
-  border-radius:8px;
-  padding:24px 16px;
-  text-align:center;
+nav.top .inner{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:16px 24px;max-width:1280px;margin:0 auto;
 }
+.logo{
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--f-display);font-weight:700;font-size:14px;
+  letter-spacing:.18em;color:var(--navy-900);text-decoration:none;
+}
+.logo .dot{width:8px;height:8px;background:var(--gold-500);border-radius:50%;box-shadow:0 0 0 3px rgba(196,154,43,.15)}
+nav.top ul{
+  display:flex;gap:28px;list-style:none;margin:0;padding:0;
+  font-family:var(--f-body);font-size:13px;font-weight:500;
+}
+nav.top a{color:var(--ink-2);text-decoration:none;transition:color .2s}
+nav.top a:hover{color:var(--gold-600)}
+@media (max-width:720px){nav.top ul{display:none}}
+
+/* =================== HERO =================== */
+.hero{
+  position:relative;
+  padding:100px 0 80px;
+  background:
+    linear-gradient(180deg,var(--navy-900) 0%,var(--navy-800) 100%);
+  color:#fff;
+  overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    radial-gradient(ellipse 800px 400px at 70% 30%, rgba(196,154,43,.18), transparent 60%),
+    radial-gradient(ellipse 600px 300px at 20% 70%, rgba(31,138,152,.12), transparent 60%);
+  pointer-events:none;
+}
+.hero::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px);
+  background-size:48px 48px;
+  mask-image:radial-gradient(ellipse at center,#000 30%,transparent 75%);
+  -webkit-mask-image:radial-gradient(ellipse at center,#000 30%,transparent 75%);
+}
+.hero .container{position:relative;z-index:2}
+
+.eyebrow{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--f-body);font-size:11px;font-weight:600;
+  letter-spacing:.32em;color:var(--gold-400);
+  text-transform:uppercase;
+  padding:8px 16px;
+  border:1px solid rgba(196,154,43,.3);
+  border-radius:999px;
+  background:rgba(196,154,43,.05);
+}
+.eyebrow .pulse{
+  width:6px;height:6px;border-radius:50%;background:var(--gold-400);
+  box-shadow:0 0 0 0 rgba(196,154,43,.7);
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(196,154,43,.6)}
+  70%{box-shadow:0 0 0 10px rgba(196,154,43,0)}
+  100%{box-shadow:0 0 0 0 rgba(196,154,43,0)}
+}
+
+.hero h1{
+  font-family:var(--f-display);font-weight:900;
+  font-size:clamp(44px,7vw,96px);line-height:1.05;
+  margin:28px 0 16px;letter-spacing:-.02em;
+  background:linear-gradient(180deg,#fff 0%,#E8E8E8 100%);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+}
+.hero .subtitle-en{
+  font-family:var(--f-serif);font-style:italic;
+  font-size:clamp(20px,2.6vw,32px);
+  color:var(--gold-300);font-weight:500;
+  letter-spacing:.02em;margin:0 0 32px;
+  direction:ltr;text-align:right;
+}
+.hero .lede{
+  font-size:clamp(17px,1.7vw,21px);font-weight:300;
+  color:rgba(255,255,255,.82);max-width:680px;line-height:1.7;
+  margin:0 0 40px;
+}
+.hero .lede strong{color:var(--cyan-300);font-weight:500}
+
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.btn{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:14px 24px;
+  font-family:var(--f-body);font-size:14px;font-weight:600;
+  text-decoration:none;
+  border-radius:4px;
+  transition:all .25s cubic-bezier(.4,0,.2,1);
+  border:none;cursor:pointer;
+  letter-spacing:.02em;
+}
+.btn-primary{
+  background:var(--gold-500);color:var(--navy-900);
+  box-shadow:0 4px 14px rgba(196,154,43,.35);
+}
+.btn-primary:hover{
+  background:var(--gold-400);transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(196,154,43,.45);
+}
+.btn-ghost{
+  background:transparent;color:#fff;
+  border:1px solid rgba(255,255,255,.25);
+}
+.btn-ghost:hover{
+  border-color:var(--gold-400);color:var(--gold-300);
+  background:rgba(196,154,43,.05);
+}
+.btn .arrow{transition:transform .25s}
+.btn:hover .arrow{transform:translateX(-4px)}
+
+/* hero meta strip */
+.hero-meta{
+  display:flex;gap:32px;flex-wrap:wrap;
+  margin-top:64px;padding-top:32px;
+  border-top:1px solid rgba(255,255,255,.1);
+  font-family:var(--f-body);font-size:12px;
+  color:rgba(255,255,255,.55);letter-spacing:.05em;
+}
+.hero-meta span strong{color:var(--gold-300);font-weight:600;display:block;font-size:14px;margin-bottom:2px}
+
+/* =================== SECTIONS =================== */
+section{padding:96px 0;position:relative}
+.section-label{
+  display:flex;align-items:center;gap:12px;
+  font-family:var(--f-mono);font-size:11px;font-weight:600;
+  letter-spacing:.2em;color:var(--gold-600);
+  text-transform:uppercase;margin-bottom:16px;
+}
+.section-label::before{
+  content:'';width:32px;height:1px;background:var(--gold-500);
+}
+.section-title{
+  font-family:var(--f-display);font-weight:700;
+  font-size:clamp(32px,4.5vw,56px);line-height:1.15;
+  color:var(--navy-900);margin:0 0 20px;letter-spacing:-.015em;
+}
+.section-sub{
+  font-size:clamp(16px,1.4vw,19px);
+  color:var(--ink-2);max-width:720px;line-height:1.7;
+  margin:0 0 56px;font-weight:300;
+}
+
+/* =================== PROBLEM SECTION =================== */
+.problem{background:var(--paper)}
+.stat-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:0;
+  border:1px solid var(--line-strong);
+  background:var(--paper-2);
+}
+.stat-card{
+  padding:48px 32px;
+  border-left:1px solid var(--line);
+  position:relative;
+}
+.stat-card:last-child{border-left:none}
 .stat-num{
-  font-family:'Cormorant Garamond',serif;
-  font-size:32px;
-  color:var(--gold);
-  font-weight:600;
-  margin-bottom:6px;
+  font-family:var(--f-display);font-weight:900;
+  font-size:clamp(56px,7vw,88px);line-height:1;
+  color:var(--gold-600);direction:ltr;text-align:right;
+  letter-spacing:-.02em;margin-bottom:8px;
 }
 .stat-label{
-  font-size:12px;
-  color:var(--cream);
-  opacity:.7;
+  font-family:var(--f-body);font-weight:700;font-size:15px;
+  color:var(--navy-900);margin-bottom:12px;
+}
+.stat-desc{font-size:13px;line-height:1.65;color:var(--ink-2);font-weight:300}
+.stat-source{
+  display:block;margin-top:14px;
+  font-family:var(--f-mono);font-size:10px;
+  color:var(--ink-2);opacity:.55;letter-spacing:.05em;
+}
+@media (max-width:880px){
+  .stat-grid{grid-template-columns:1fr}
+  .stat-card{border-left:none;border-bottom:1px solid var(--line)}
+  .stat-card:last-child{border-bottom:none}
 }
 
-.section-title{
-  font-size:13px;
-  letter-spacing:.3em;
-  color:var(--gold);
+/* =================== DEMO SECTION =================== */
+.demo{
+  background:linear-gradient(180deg,var(--paper) 0%,var(--paper-2) 100%);
+  padding:120px 0;
+}
+.demo-banner{
+  display:inline-flex;align-items:center;gap:10px;
+  padding:8px 16px;
+  background:var(--navy-900);color:var(--gold-400);
+  font-family:var(--f-mono);font-size:11px;font-weight:600;
+  letter-spacing:.15em;text-transform:uppercase;
+  border-radius:4px;margin-bottom:20px;
+}
+.demo-banner .live{
+  width:8px;height:8px;border-radius:50%;background:var(--teal-400);
+  animation:pulse-teal 2s infinite;
+}
+@keyframes pulse-teal{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.5;transform:scale(1.3)}
+}
+
+/* tabs */
+.demo-tabs{
+  display:flex;gap:0;margin-bottom:32px;
+  border-bottom:2px solid var(--line);
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.demo-tabs::-webkit-scrollbar{display:none}
+.tab{
+  padding:16px 22px;
+  font-family:var(--f-body);font-size:14px;font-weight:500;
+  color:var(--ink-2);background:transparent;border:none;
+  cursor:pointer;border-bottom:2px solid transparent;
+  margin-bottom:-2px;transition:all .2s;white-space:nowrap;
+  display:flex;align-items:center;gap:10px;
+}
+.tab .num{
+  font-family:var(--f-mono);font-size:11px;font-weight:700;
+  color:var(--gold-600);opacity:.6;
+}
+.tab:hover{color:var(--navy-800)}
+.tab.active{color:var(--navy-900);border-bottom-color:var(--gold-500);font-weight:700}
+.tab.active .num{opacity:1}
+
+.demo-panel{
+  background:#fff;border:1px solid var(--line-strong);
+  box-shadow:var(--shadow-lg);
+  overflow:hidden;display:none;
+}
+.demo-panel.active{display:block;animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.panel-header{
+  padding:20px 28px;
+  border-bottom:1px solid var(--line);
+  display:flex;justify-content:space-between;align-items:center;
+  background:linear-gradient(180deg,var(--paper-2),var(--paper));
+}
+.panel-title{
+  font-family:var(--f-display);font-weight:700;font-size:18px;
+  color:var(--navy-900);margin:0;
+}
+.panel-title .en{
+  font-family:var(--f-mono);font-size:11px;
+  color:var(--gold-600);font-weight:400;display:block;
+  letter-spacing:.1em;margin-top:2px;
+}
+.panel-body{padding:32px 28px}
+
+/* input row */
+.input-row{
+  display:flex;gap:12px;flex-wrap:wrap;align-items:stretch;
   margin-bottom:24px;
-  text-align:center;
+}
+.input-row label{
+  font-family:var(--f-mono);font-size:11px;font-weight:600;
+  color:var(--ink-2);letter-spacing:.1em;text-transform:uppercase;
+  display:block;margin-bottom:8px;
+}
+.input-row textarea, .input-row input[type=text]{
+  width:100%;
+  font-family:var(--f-body);font-size:15px;line-height:1.7;
+  padding:14px 16px;
+  border:1.5px solid var(--line-strong);
+  background:var(--paper);color:var(--navy-900);
+  border-radius:4px;
+  direction:rtl;text-align:right;
+  transition:border-color .2s, box-shadow .2s;
+  resize:vertical;
+}
+.input-row textarea:focus, .input-row input[type=text]:focus{
+  outline:none;border-color:var(--gold-500);
+  box-shadow:0 0 0 4px rgba(196,154,43,.12);
+}
+.preset-row{
+  display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;
+}
+.preset{
+  padding:6px 12px;font-size:12px;
+  font-family:var(--f-body);
+  background:var(--paper-2);color:var(--ink-2);
+  border:1px solid var(--line);border-radius:3px;
+  cursor:pointer;transition:all .15s;
+}
+.preset:hover{
+  background:var(--navy-900);color:var(--gold-300);
+  border-color:var(--navy-900);
 }
 
-.demo-cta{
-  display:block;
-  background:linear-gradient(135deg,var(--gold) 0%,#B89548 100%);
-  color:var(--navy);
-  text-decoration:none;
-  padding:24px 28px;
-  border-radius:10px;
-  margin-bottom:48px;
-  text-align:center;
-  font-weight:600;
-  box-shadow:0 8px 24px rgba(201,169,97,.25);
-  transition:all .25s;
-  border:1px solid var(--gold);
+.controls{
+  display:flex;gap:24px;align-items:center;flex-wrap:wrap;
+  padding:16px 20px;background:var(--paper-2);
+  border-radius:4px;margin-bottom:20px;
 }
-.demo-cta:hover,.demo-cta:active{
-  transform:translateY(-2px);
-  box-shadow:0 12px 32px rgba(201,169,97,.4);
+.control{display:flex;align-items:center;gap:10px}
+.control label{
+  font-family:var(--f-body);font-size:13px;font-weight:500;
+  color:var(--ink-2);margin:0;
 }
-.demo-label{
-  display:block;
-  font-family:'Cormorant Garamond',serif;
-  font-size:12px;
-  letter-spacing:.3em;
-  margin-bottom:6px;
-  opacity:.8;
-  font-weight:500;
+.control input[type=range]{
+  width:120px;accent-color:var(--gold-500);
 }
-.demo-title{display:block;font-size:20px;margin-bottom:4px}
-.demo-sub{display:block;font-size:13px;font-weight:400;opacity:.85;font-family:'Cormorant Garamond',serif;letter-spacing:.08em}
-
-.files{display:flex;flex-direction:column;gap:12px;margin-bottom:56px}
-.file{
-  background:var(--navy-2);
+.control .val{
+  font-family:var(--f-mono);font-size:12px;font-weight:600;
+  color:var(--navy-900);
+  padding:3px 8px;background:#fff;border-radius:3px;
+  min-width:42px;text-align:center;direction:ltr;
   border:1px solid var(--line);
-  border-radius:8px;
-  padding:18px 20px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  text-decoration:none;
-  color:var(--cream);
-  transition:all .25s;
-}
-.file:hover,.file:active{
-  border-color:var(--gold);
-  background:#13293F;
-  transform:translateX(-2px);
-}
-.file-info{flex:1;min-width:0}
-.file-title{font-size:15px;font-weight:500;margin-bottom:3px}
-.file-meta{font-size:12px;color:var(--teal);opacity:.85}
-.file-num{
-  width:38px;
-  height:38px;
-  border-radius:6px;
-  background:rgba(201,169,97,.1);
-  border:1px solid var(--line);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  margin-left:14px;
-  flex-shrink:0;
-  color:var(--gold);
-  font-family:'Cormorant Garamond',serif;
-  font-size:18px;
-  font-weight:600;
 }
 
-.footer{
+/* run button */
+.run-btn{
+  padding:12px 22px;
+  background:var(--navy-900);color:var(--gold-400);
+  font-family:var(--f-body);font-size:13px;font-weight:600;
+  border:none;border-radius:4px;cursor:pointer;
+  letter-spacing:.05em;transition:all .2s;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.run-btn:hover{background:var(--navy-800);color:var(--gold-300)}
+.run-btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* output area */
+.output{
+  margin-top:20px;
+  border:1px solid var(--line);
+  background:var(--paper);border-radius:4px;
+  overflow:hidden;
+}
+.output-header{
+  padding:10px 16px;
+  background:var(--navy-900);color:#fff;
+  font-family:var(--f-mono);font-size:11px;
+  letter-spacing:.1em;text-transform:uppercase;
+  display:flex;justify-content:space-between;
+}
+.output-header .pill{
+  padding:2px 8px;background:rgba(196,154,43,.2);
+  color:var(--gold-300);border-radius:2px;font-weight:600;
+}
+.output-body{padding:20px;font-family:var(--f-body);font-size:14px}
+
+/* === MPE visualization === */
+.token-grid{
+  display:flex;flex-wrap:wrap;gap:8px;
+  direction:rtl;
+}
+.token-card{
+  background:#fff;border:1px solid var(--line);
+  padding:10px 12px;border-radius:4px;
+  min-width:88px;text-align:center;
+  position:relative;transition:transform .2s, box-shadow .2s;
+  animation:tokenIn .3s ease backwards;
+}
+@keyframes tokenIn{from{opacity:0;transform:translateY(8px) scale(.95)}to{opacity:1;transform:none}}
+.token-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);z-index:5}
+.token-surface{
+  font-family:var(--f-display);font-size:17px;font-weight:700;
+  color:var(--navy-900);margin-bottom:8px;line-height:1;
+}
+.token-streams{display:flex;flex-direction:column;gap:3px}
+.stream-row{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:10px;font-family:var(--f-mono);
+  padding:2px 6px;border-radius:2px;
+}
+.stream-r{background:rgba(196,154,43,.15);color:var(--gold-600)}
+.stream-w{background:rgba(31,138,152,.15);color:var(--teal-700)}
+.stream-s{background:rgba(15,39,69,.08);color:var(--navy-700)}
+.stream-row .lbl{font-weight:700;opacity:.7}
+.stream-row .val{font-weight:600;direction:rtl}
+
+.legend{
+  display:flex;gap:20px;flex-wrap:wrap;margin-top:24px;
+  padding:14px 18px;background:var(--paper-2);
+  border-right:3px solid var(--gold-500);
+  font-size:12px;color:var(--ink-2);
+}
+.legend .item{display:flex;align-items:center;gap:8px}
+.legend .swatch{width:10px;height:10px;border-radius:2px}
+.legend strong{font-family:var(--f-display);color:var(--navy-900);font-weight:700}
+
+/* === MRCM visualization === */
+.mrcm-canvas{
+  background:linear-gradient(180deg,var(--paper) 0%,var(--paper-2) 100%);
+  border:1px solid var(--line);border-radius:4px;
+  padding:24px;position:relative;min-height:380px;
+  overflow:hidden;
+}
+.mrcm-tiers{display:flex;flex-direction:column;gap:18px}
+.tier{
+  background:#fff;border:1px solid var(--line);
+  padding:14px 16px;border-radius:4px;
+  position:relative;
+}
+.tier-header{
+  display:flex;justify-content:space-between;align-items:baseline;
+  margin-bottom:10px;
+}
+.tier-name{
+  font-family:var(--f-display);font-weight:700;font-size:14px;
+  color:var(--navy-900);
+}
+.tier-name .en{
+  font-family:var(--f-mono);font-size:10px;
+  color:var(--ink-2);opacity:.6;margin-right:8px;
+  letter-spacing:.05em;
+}
+.tier-meta{
+  font-family:var(--f-mono);font-size:11px;
+  color:var(--ink-2);direction:ltr;
+}
+.tier-meta strong{color:var(--gold-600)}
+.tier-bar{
+  height:24px;background:var(--paper-2);
+  border-radius:3px;overflow:hidden;position:relative;
+  display:flex;
+}
+.tier-block{
+  height:100%;display:flex;align-items:center;justify-content:center;
+  font-size:9px;color:#fff;font-family:var(--f-mono);font-weight:600;
+  position:relative;
+  transition:flex 0.5s ease;
+}
+.tier-0 .tier-block{background:linear-gradient(90deg,var(--teal-600),var(--teal-500))}
+.tier-1 .tier-block{background:linear-gradient(90deg,var(--gold-600),var(--gold-500))}
+.tier-2 .tier-block{background:linear-gradient(90deg,var(--navy-800),var(--navy-700))}
+.tier-block + .tier-block{border-right:2px solid rgba(255,255,255,.3)}
+
+.compare-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px;
+}
+.compare-card{
+  padding:16px;border-radius:4px;
+}
+.compare-card.baseline{background:var(--paper-2);border:1px solid var(--line)}
+.compare-card.lca{background:linear-gradient(135deg,var(--navy-900),var(--navy-800));color:#fff}
+.compare-card h4{
+  font-family:var(--f-display);font-size:13px;font-weight:700;
+  margin:0 0 12px;letter-spacing:.05em;
+}
+.compare-card.lca h4{color:var(--gold-400)}
+.compare-card .big{
+  font-family:var(--f-display);font-weight:900;
+  font-size:36px;line-height:1;direction:ltr;text-align:right;
+}
+.compare-card.baseline .big{color:var(--navy-900)}
+.compare-card.lca .big{color:#fff}
+.compare-card .unit{font-size:13px;color:var(--ink-2);margin-top:6px}
+.compare-card.lca .unit{color:rgba(255,255,255,.7)}
+@media (max-width:600px){.compare-row{grid-template-columns:1fr}}
+
+/* === GRO visualization === */
+.gro-svg{
+  width:100%;height:auto;
+  background:linear-gradient(180deg,#fff,var(--paper));
+  border:1px solid var(--line);border-radius:4px;
+  display:block;
+}
+.gro-stats{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:12px;margin-top:20px;
+}
+.gro-stat{
+  background:var(--paper-2);padding:14px;border-radius:4px;
+  border-right:3px solid var(--gold-500);
+}
+.gro-stat .label{
+  font-family:var(--f-mono);font-size:10px;
+  color:var(--ink-2);letter-spacing:.1em;
+  text-transform:uppercase;margin-bottom:6px;
+}
+.gro-stat .val{
+  font-family:var(--f-display);font-weight:700;font-size:22px;
+  color:var(--navy-900);direction:ltr;text-align:right;
+}
+
+/* === ACC visualization === */
+.acc-chart{
+  background:#fff;border:1px solid var(--line);border-radius:4px;
+  padding:20px;
+}
+.acc-bars{display:flex;flex-direction:column;gap:6px}
+.acc-row{
+  display:grid;grid-template-columns:80px 1fr 70px;
+  gap:12px;align-items:center;
+}
+.acc-row .tk{
+  font-family:var(--f-display);font-weight:700;font-size:14px;
+  color:var(--navy-900);text-align:left;direction:rtl;
+}
+.acc-row .bar-wrap{
+  height:20px;background:var(--paper-2);
+  border-radius:3px;overflow:hidden;position:relative;
+}
+.acc-row .bar{
+  height:100%;background:linear-gradient(90deg,var(--teal-600),var(--gold-500));
+  transition:width .6s cubic-bezier(.4,0,.2,1);
+}
+.acc-row.high .bar{background:linear-gradient(90deg,var(--gold-500),var(--crimson))}
+.acc-row.low .bar{background:linear-gradient(90deg,var(--teal-700),var(--teal-500))}
+.acc-row .ratio{
+  font-family:var(--f-mono);font-size:12px;font-weight:600;
+  color:var(--navy-900);direction:ltr;text-align:right;
+}
+
+/* === comparison final === */
+.final-compare{
+  display:grid;grid-template-columns:1fr 1fr;gap:20px;
+  margin-top:32px;
+}
+.final-card{
+  padding:28px;border-radius:6px;position:relative;overflow:hidden;
+}
+.final-card.transformer{
+  background:var(--paper-2);border:1px solid var(--line-strong);
+}
+.final-card.lca{
+  background:linear-gradient(135deg,var(--navy-900) 0%,var(--navy-800) 100%);
+  color:#fff;
+}
+.final-card.lca::before{
+  content:'';position:absolute;top:0;right:0;width:120px;height:120px;
+  background:radial-gradient(circle,rgba(196,154,43,.2),transparent 70%);
+}
+.final-card h3{
+  font-family:var(--f-display);font-size:22px;font-weight:700;
+  margin:0 0 6px;
+}
+.final-card .label{
+  font-family:var(--f-mono);font-size:11px;
+  letter-spacing:.15em;text-transform:uppercase;
+  color:var(--ink-2);margin-bottom:18px;
+}
+.final-card.lca .label{color:var(--gold-400)}
+.metric{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:12px 0;
   border-top:1px solid var(--line);
-  padding-top:32px;
-  text-align:center;
-  font-size:13px;
-  color:var(--cream);
-  opacity:.7;
+  font-family:var(--f-body);
 }
-.footer p{margin-bottom:6px}
-.footer .contact{color:var(--gold);font-weight:500}
-.confidential{
-  font-family:'Cormorant Garamond',serif;
-  font-style:italic;
-  font-size:12px;
-  color:var(--teal);
-  margin-top:16px;
-  letter-spacing:.1em;
+.final-card.lca .metric{border-top-color:rgba(255,255,255,.1)}
+.metric .key{font-size:13px;color:var(--ink-2)}
+.final-card.lca .metric .key{color:rgba(255,255,255,.6)}
+.metric .val{
+  font-family:var(--f-mono);font-weight:700;font-size:14px;
+  color:var(--navy-900);direction:ltr;
+}
+.final-card.lca .metric .val{color:var(--gold-300)}
+.savings{
+  margin-top:24px;padding:18px;
+  background:rgba(196,154,43,.15);border-radius:4px;
+  text-align:center;
+}
+.savings .num{
+  font-family:var(--f-display);font-weight:900;font-size:42px;
+  color:var(--gold-400);direction:ltr;line-height:1;
+}
+.savings .desc{
+  font-size:12px;color:rgba(255,255,255,.8);margin-top:6px;
+}
+@media (max-width:760px){.final-compare{grid-template-columns:1fr}}
+
+/* === ARCH SECTION === */
+.arch{background:var(--navy-900);color:#fff;position:relative;overflow:hidden}
+.arch::before{
+  content:'';position:absolute;inset:0;
+  background-image:
+    radial-gradient(ellipse 600px 300px at 80% 20%, rgba(196,154,43,.1), transparent 60%),
+    radial-gradient(ellipse 500px 250px at 20% 80%, rgba(31,138,152,.08), transparent 60%);
+}
+.arch .container{position:relative;z-index:1}
+.arch .section-label{color:var(--gold-400)}
+.arch .section-label::before{background:var(--gold-400)}
+.arch .section-title{color:#fff}
+.arch .section-sub{color:rgba(255,255,255,.7)}
+
+.modules{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:20px;
+}
+.module{
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.08);
+  padding:28px;border-radius:6px;
+  position:relative;backdrop-filter:blur(10px);
+  transition:all .3s;
+}
+.module:hover{
+  border-color:rgba(196,154,43,.4);
+  background:rgba(196,154,43,.04);
+  transform:translateY(-4px);
+}
+.module-num{
+  font-family:var(--f-mono);font-size:12px;font-weight:600;
+  color:var(--gold-400);letter-spacing:.15em;margin-bottom:10px;
+}
+.module h3{
+  font-family:var(--f-display);font-size:22px;font-weight:700;
+  color:#fff;margin:0 0 6px;line-height:1.3;
+}
+.module .code{
+  font-family:var(--f-mono);font-size:12px;color:var(--cyan-300);
+  margin-bottom:14px;letter-spacing:.05em;
+}
+.module p{
+  font-size:14px;line-height:1.7;color:rgba(255,255,255,.75);
+  margin:0;font-weight:300;
+}
+@media (max-width:760px){.modules{grid-template-columns:1fr}}
+
+/* === PATENT SECTION === */
+.patents{background:var(--paper-2)}
+.patent-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:16px;
+}
+.patent{
+  background:#fff;border:1px solid var(--line);
+  padding:24px;border-radius:4px;
+  border-top:3px solid var(--gold-500);
+}
+.patent.medium{border-top-color:var(--teal-600)}
+.patent.defensive{border-top-color:var(--ink-2)}
+.patent-code{
+  font-family:var(--f-mono);font-weight:700;font-size:14px;
+  color:var(--gold-600);letter-spacing:.1em;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.patent-code .strength{
+  font-family:var(--f-body);font-size:10px;font-weight:600;
+  padding:3px 8px;border-radius:2px;letter-spacing:.05em;
+}
+.patent .strength.strong{background:rgba(196,154,43,.15);color:var(--gold-600)}
+.patent .strength.mid{background:rgba(31,138,152,.15);color:var(--teal-700)}
+.patent .strength.def{background:rgba(15,39,69,.08);color:var(--navy-700)}
+.patent h4{
+  font-family:var(--f-display);font-size:17px;font-weight:700;
+  color:var(--navy-900);margin:14px 0 10px;line-height:1.3;
+}
+.patent p{
+  font-size:13.5px;line-height:1.65;
+  color:var(--ink-2);margin:0;
+}
+@media (max-width:760px){.patent-grid{grid-template-columns:1fr}}
+
+/* === CTA SECTION === */
+.cta-final{
+  background:linear-gradient(180deg,var(--navy-900),var(--navy-800));
+  color:#fff;padding:120px 0;text-align:center;
+  position:relative;overflow:hidden;
+}
+.cta-final::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 800px 400px at 50% 0%, rgba(196,154,43,.15), transparent 60%);
+}
+.cta-final .container{position:relative;z-index:1}
+.cta-final h2{
+  font-family:var(--f-display);font-weight:900;
+  font-size:clamp(36px,5vw,72px);line-height:1.1;
+  margin:0 0 16px;
+}
+.cta-final .serif{
+  font-family:var(--f-serif);font-style:italic;
+  color:var(--gold-300);
+}
+.cta-final p{
+  font-size:18px;max-width:620px;margin:0 auto 40px;
+  color:rgba(255,255,255,.75);font-weight:300;line-height:1.7;
+}
+.contact-card{
+  display:inline-block;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(196,154,43,.3);
+  padding:32px 48px;border-radius:6px;
+  text-align:right;direction:rtl;
+  margin-top:24px;
+}
+.contact-card .name{
+  font-family:var(--f-display);font-weight:700;font-size:24px;
+  color:#fff;margin-bottom:4px;
+}
+.contact-card .title{
+  font-size:13px;color:var(--gold-300);margin-bottom:18px;
+  letter-spacing:.05em;
+}
+.contact-card .line{
+  font-family:var(--f-mono);font-size:13px;
+  color:rgba(255,255,255,.7);direction:ltr;text-align:right;
+  margin-top:6px;
 }
 
-@media (max-width:600px){
-  .title{font-size:32px}
-  .stats{grid-template-columns:1fr;gap:10px}
-  .stat-num{font-size:26px}
-  .container{padding:32px 18px 60px}
-  .demo-title{font-size:18px}
+/* footer */
+footer{
+  background:var(--navy-900);color:rgba(255,255,255,.5);
+  padding:32px 0;border-top:1px solid rgba(255,255,255,.08);
+  font-size:12px;
 }
+footer .inner{
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;
+  max-width:1280px;margin:0 auto;padding:0 24px;
+}
+footer .logo{color:rgba(255,255,255,.85)}
+footer a{color:var(--gold-400);text-decoration:none}
+
+/* ==== RESPONSIVE ==== */
+@media (max-width:720px){
+  section{padding:64px 0}
+  .hero{padding:64px 0}
+  .panel-body{padding:24px 18px}
+  .controls{flex-direction:column;align-items:stretch}
+  .control{justify-content:space-between}
+  .control input[type=range]{width:100%}
+}
+
+/* utility */
+.mono{font-family:var(--f-mono)}
+.gold{color:var(--gold-500)}
+.fade-in{animation:fadeUp .6s ease backwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+
+/* skip link for a11y */
+.skip{position:absolute;left:-9999px;top:0}
+.skip:focus{left:0;background:var(--gold-500);color:var(--navy-900);padding:8px 16px;z-index:1000}
+
+/* === investor strip === */
+.invest-strip{
+  background:var(--paper-3);padding:24px 0;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+.invest-strip .inner{
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px;
+  font-family:var(--f-mono);font-size:11px;
+  color:var(--ink-2);letter-spacing:.1em;text-transform:uppercase;
+}
+.invest-strip strong{color:var(--gold-600);font-weight:700}
 </style>
+<base target="_blank">
 </head>
 <body>
-<div class="container">
 
-  <div class="brand">ARKANE AI</div>
+<a href="#main" class="skip">تخطّي إلى المحتوى</a>
 
-  <h1 class="title">بنية السياق السائل</h1>
-  <div class="subtitle-en">LIQUID CONTEXT ARCHITECTURE</div>
-  <div class="tagline">ذاكرة عربية أصلية للذكاء الاصطناعي السيادي</div>
-  <div class="divider"></div>
-
-  <div class="intro">
-    <p>مشروع بحثي تقني صادر عن <span class="highlight">ARKANE AI — قسم الأبحاث</span>، يعالج فجوة بنيوية موثّقة في نماذج اللغة الكبرى الحالية تجاه اللغة العربية.</p>
-    <p>اللغة العربية تتكلّف من <span class="highlight">2.4 إلى 4 أضعاف</span> الإنجليزية على كل طلب — ضريبة خفية تُقدَّر بـ <span class="highlight">25 مليار دولار</span> هدراً تراكمياً على مقياس النشر السيادي الإقليمي حتى 2030.</p>
-    <p>لا يوجد حتى اليوم أي LLM مبني بتصميم معماري عربي أصلي. <span class="highlight">LCA</span> يطرح حلاً معمارياً جديداً مدعوماً بمراجع علمية محكّمة.</p>
+<nav class="top">
+  <div class="inner">
+    <a class="logo" href="#">
+      <span class="dot"></span>
+      ARKANE AI
+    </a>
+    <ul>
+      <li><a href="#problem">المشكلة</a></li>
+      <li><a href="#demo">المحاكاة</a></li>
+      <li><a href="#architecture">المعمارية</a></li>
+      <li><a href="#patents">البراءات</a></li>
+      <li><a href="#contact">تواصل</a></li>
+    </ul>
   </div>
+</nav>
 
-  <div class="stats">
-    <div class="stat">
-      <div class="stat-num">2.4×</div>
-      <div class="stat-label">خصوبة التقطيع</div>
+<main id="main">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <span class="eyebrow"><span class="pulse"></span>إفصاح ما قبل البراءة · 2026</span>
+    <h1>بنية السياق<br>السائل</h1>
+    <p class="subtitle-en">Liquid Context Architecture</p>
+    <p class="lede">
+‎      ذاكرة هرمية واعية بالصرف لنماذج اللغة العربية السيادية.
+      <strong>محاكاة تفاعلية تشتغل الآن في متصفّحك</strong> — جرّب الخوارزميات الأربع
+‎      على نصّك العربي، شاهد المُرمِّز الصرفي يفصل الجذور، الضغط يهرَّم، الاسترجاع يقفز جيوديزياً.
+    </p>
+    <div class="hero-cta">
+      <a href="#demo" class="btn btn-primary">شغّل المحاكاة <span class="arrow">←</span></a>
+      <a href="#architecture" class="btn btn-ghost">المعمارية الكاملة</a>
     </div>
-    <div class="stat">
-      <div class="stat-num">$25B</div>
-      <div class="stat-label">هدر تراكمي</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">0</div>
-      <div class="stat-label">بنية عربية أصلية</div>
+    <div class="hero-meta">
+      <span><strong>4 خوارزميات</strong>تعمل في المتصفح</span>
+      <span><strong>4 براءات</strong>قيد الإيداع</span>
+      <span><strong>$41.7M</strong>توقّع ARR · السنة 5</span>
+      <span><strong>هيومين</strong>الشريك المستهدف</span>
     </div>
   </div>
+</section>
 
-  <div class="section-title">— ابدأ بالعرض التفاعلي —</div>
-
-  <a class="demo-cta" href="arkane-lca-report.html">
-    <span class="demo-label">INTERACTIVE BRIEF</span>
-    <span class="demo-title">العرض التفاعلي الكامل</span>
-    <span class="demo-sub">Arkane LCA · Executive Report</span>
-  </a>
-
-  <div class="section-title">— الملفات البحثية —</div>
-
-  <div class="files">
-
-    <a class="file" href="1_LCA_Pitch_Deck_AR2.pptx" download>
-      <div class="file-info">
-        <div class="file-title">العرض التقديمي</div>
-        <div class="file-meta">Pitch Deck · النسخة العربية · PPTX</div>
-      </div>
-      <div class="file-num">1</div>
-    </a>
-
-    <a class="file" href="2_LCA_Research_and_Feasibility_AR2.docx" download>
-      <div class="file-info">
-        <div class="file-title">دراسة البحث والجدوى</div>
-        <div class="file-meta">Research & Feasibility · النسخة العربية · DOCX</div>
-      </div>
-      <div class="file-num">2</div>
-    </a>
-
-    <a class="file" href="3_LCA_MVP_Spec_AR2.docx" download>
-      <div class="file-info">
-        <div class="file-title">المواصفات التقنية للنموذج الأولي</div>
-        <div class="file-meta">MVP Technical Spec · النسخة العربية · DOCX</div>
-      </div>
-      <div class="file-num">3</div>
-    </a>
-
-    <a class="file" href="4_LCA_Pitch_Deck_EN2.pptx" download>
-      <div class="file-info">
-        <div class="file-title">Pitch Deck</div>
-        <div class="file-meta">English Version · PPTX</div>
-      </div>
-      <div class="file-num">4</div>
-    </a>
-
-    <a class="file" href="5_LCA_MVP_Spec_EN2.docx" download>
-      <div class="file-info">
-        <div class="file-title">MVP Technical Specification</div>
-        <div class="file-meta">English Version · DOCX</div>
-      </div>
-      <div class="file-num">5</div>
-    </a>
-
-    <a class="file" href="6_LCA_Research_and_Feasibility_EN.docx" download>
-      <div class="file-info">
-        <div class="file-title">Research & Feasibility Study</div>
-        <div class="file-meta">English Version · DOCX</div>
-      </div>
-      <div class="file-num">6</div>
-    </a>
-
+<div class="invest-strip">
+  <div class="container">
+    <div class="inner">
+      <span>محاكاة حسابية حقيقية · <strong>لا فيديو · لا صورة</strong></span>
+      <span>كل القياسات أدناه <strong>محسوبة في وقت التشغيل</strong></span>
+      <span>اضغط على <strong>«شغّل»</strong> في كل خوارزمية</span>
+    </div>
   </div>
-
-  <div class="footer">
-    <p><span class="contact">د. فيصل العسيري</span></p>
-    <p>مؤسس ARKANE AI — قسم الأبحاث</p>
-    <p>أبها · المملكة العربية السعودية</p>
-    <p style="margin-top:10px">faisalasiri2019@gmail.com · +966 56 583 3185</p>
-    <p class="confidential">إفصاح تقني ما قبل البراءة · للمراجعة من قِبل الأطراف المؤهَّلة فقط</p>
-  </div>
-
 </div>
+
+<!-- PROBLEM -->
+<section class="problem" id="problem">
+  <div class="container">
+    <div class="section-label">المشكلة البنيوية</div>
+    <h2 class="section-title">العربية تدفع ضريبةً خفيّة<br>على كل LLM في العالم</h2>
+    <p class="section-sub">
+‎      كل طلب بالعربية إلى GPT-5 أو Claude أو Gemini أو علام أو جايس
+‎      يُكلّف 2–4 أضعاف نظيره الإنجليزي. السبب ليس تجميلياً ـ هو بنيوي في كل معمارية ترانسفورمر منشورة.
+    </p>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-num">2.4×</div>
+        <div class="stat-label">خصوبة التقطيع</div>
+        <div class="stat-desc">العربية تحتاج 2.4–5.1 قطعة لكل كلمة، مقابل 1.3 للإنجليزية.</div>
+        <span class="stat-source">Alakeel et al., 2026 · arXiv 2603.15773</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">$25B</div>
+        <div class="stat-label">هدر تراكمي</div>
+        <div class="stat-desc">حوسبة مهدورة على عدم كفاءة العربية على مقياس هيومين 3–6 GW حتى 2030.</div>
+        <span class="stat-source">تقدير ARKANE · سيناريو متحفّظ</span>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">0</div>
+        <div class="stat-label">بنية عربية أصلية</div>
+        <div class="stat-desc">علام، جايس، فالكون، فنار: جميعها فاين-تيون لترانسفورمر مُصمَّم للإنجليزية.</div>
+        <span class="stat-source">مسح حالة الفن · 2026</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section class="demo" id="demo">
+  <div class="container">
+    <div class="demo-banner">
+      <span class="live"></span>
+‎      محاكاة مباشرة في المتصفح
+    </div>
+    <h2 class="section-title">جرّب الخوارزميات الأربع</h2>
+    <p class="section-sub">
+‎      اكتب نصاً عربياً، اضبط الميزانية، اضغط «شغّل». كل ما تراه أدناه
+‎      مُحسَّب على جهازك الآن — لا تخمين، لا رسوم متحركة مزيّفة.
+    </p>
+
+    <div class="demo-tabs" role="tablist">
+      <button class="tab active" data-tab="mpe" role="tab"><span class="num">01</span> المُرمِّز الصرفي</button>
+      <button class="tab" data-tab="mrcm" role="tab"><span class="num">02</span> منحنى السياق</button>
+      <button class="tab" data-tab="gro" role="tab"><span class="num">03</span> الاسترجاع الجيوديزي</button>
+      <button class="tab" data-tab="acc" role="tab"><span class="num">04</span> الضغط التكيّفي</button>
+      <button class="tab" data-tab="compare" role="tab"><span class="num">★</span> المقارنة النهائية</button>
+    </div>
+
+    <!-- ====== MPE PANEL ====== -->
+    <div class="demo-panel active" id="panel-mpe">
+      <div class="panel-header">
+        <h3 class="panel-title">المُرمِّز الصرفي القبلي
+          <span class="en">MORPHOLOGICAL PRE-ENCODER (MPE) · 01</span>
+        </h3>
+        <span class="mono" style="font-size:11px;color:var(--ink-2);opacity:.65">3 تدفّقات · جذر / وزن / سطح</span>
+      </div>
+      <div class="panel-body">
+        <p style="margin:0 0 16px;font-size:14px;color:var(--ink-2);line-height:1.7">
+‎          المُرمِّز يفصل كل كلمة عربية إلى ثلاث طبقات معلوماتية متوازية تُعالَج باستقلال
+‎          داخل النموذج — هذا مستحيل في الترانسفورمر القياسي ويُمثّل قلب الابتكار العربي.
+        </p>
+
+        <label style="font-family:var(--f-mono);font-size:11px;font-weight:600;color:var(--ink-2);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:8px">نصّك العربي</label>
+        <div class="input-row">
+          <textarea id="mpe-input" rows="2" placeholder="اكتب جملة عربية...">الكاتب يكتب مكتوبًا في المكتبة</textarea>
+        </div>
+
+        <div class="preset-row">
+          <span style="font-size:11px;color:var(--ink-2);align-self:center;margin-left:6px">أو جرّب:</span>
+          <button class="preset" data-text="الكاتب يكتب مكتوبًا في المكتبة">الكتابة</button>
+          <button class="preset" data-text="المهندسون درسوا تصاميم المباني المستدامة">الهندسة</button>
+          <button class="preset" data-text="الباحث يستخرج المعلومات من قاعدة البيانات الضخمة">البحث</button>
+          <button class="preset" data-text="استثمر صندوق الاستثمارات في الذكاء الاصطناعي السيادي">الاستثمار</button>
+        </div>
+
+        <button class="run-btn" id="mpe-run">▶ شغّل المُرمِّز</button>
+
+        <div class="output">
+          <div class="output-header">
+            <span>المخرج · ثلاثة تدفّقات تضمين متوازية</span>
+            <span class="pill" id="mpe-count">0 قطعة</span>
+          </div>
+          <div class="output-body">
+            <div class="token-grid" id="mpe-out"></div>
+            <div class="legend">
+              <div class="item"><span class="swatch" style="background:rgba(196,154,43,.5)"></span> <strong>R</strong> · الجذر (root)</div>
+              <div class="item"><span class="swatch" style="background:rgba(31,138,152,.5)"></span> <strong>W</strong> · الوزن (pattern)</div>
+              <div class="item"><span class="swatch" style="background:rgba(15,39,69,.3)"></span> <strong>S</strong> · السطح (surface)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== MRCM PANEL ====== -->
+    <div class="demo-panel" id="panel-mrcm">
+      <div class="panel-header">
+        <h3 class="panel-title">منحنى السياق متعدّد الدقّات
+          <span class="en">MULTI-RESOLUTION CONTEXT MANIFOLD (MRCM) · 02</span>
+        </h3>
+        <span class="mono" style="font-size:11px;color:var(--ink-2);opacity:.65">3 طبقات هرمية</span>
+      </div>
+      <div class="panel-body">
+        <p style="margin:0 0 16px;font-size:14px;color:var(--ink-2);line-height:1.7">
+‎          السياق لا يُخزَّن كتسلسل قطع مسطّح، بل كمنحنى ثلاثي الطبقات:
+‎          الحديث بدقّة كاملة، الأقدم مُضغوط دلالياً، والترابط منظَّم كرسم بياني.
+        </p>
+
+        <div class="controls">
+          <div class="control">
+            <label>طول السياق</label>
+            <input type="range" id="mrcm-ctx" min="2" max="128" value="32" step="2">
+            <span class="val" id="mrcm-ctx-v">32K</span>
+          </div>
+          <div class="control">
+            <label>سعة الطبقة 0</label>
+            <input type="range" id="mrcm-tier0" min="2" max="16" value="8">
+            <span class="val" id="mrcm-tier0-v">8K</span>
+          </div>
+          <div class="control">
+            <label>نسبة الضغط</label>
+            <input type="range" id="mrcm-ratio" min="4" max="32" value="16">
+            <span class="val" id="mrcm-ratio-v">16:1</span>
+          </div>
+        </div>
+
+        <div class="mrcm-canvas">
+          <div class="mrcm-tiers" id="mrcm-tiers"></div>
+        </div>
+
+        <div class="compare-row">
+          <div class="compare-card baseline">
+            <h4>ترانسفورمر قياسي · O(n²)</h4>
+            <div class="big" id="mrcm-base-flops">—</div>
+            <div class="unit">GFLOPs لكل قطعة مُولَّدة</div>
+          </div>
+          <div class="compare-card lca">
+            <h4>LCA · O(n log n)</h4>
+            <div class="big" id="mrcm-lca-flops">—</div>
+            <div class="unit">GFLOPs لكل قطعة مُولَّدة</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== GRO PANEL ====== -->
+    <div class="demo-panel" id="panel-gro">
+      <div class="panel-header">
+        <h3 class="panel-title">مُشغِّل الاسترجاع الجيوديزي
+          <span class="en">GEODESIC RETRIEVAL OPERATOR (GRO) · 03</span>
+        </h3>
+        <span class="mono" style="font-size:11px;color:var(--ink-2);opacity:.65">أقصر مسار دلالي مقيّد بالميزانية</span>
+      </div>
+      <div class="panel-body">
+        <p style="margin:0 0 16px;font-size:14px;color:var(--ink-2);line-height:1.7">
+‎          عند معالجة استعلام، يحسب GRO أقصر مسار عبر الرسم البياني الطوبولوجي
+‎          لعناقيد السياق ـ يفكّ ضغط فقط ما يحتاجه. الحوسبة محدودة بميزانية،
+‎          والسياق الفعلي يُصبح غير محدود نظرياً.
+        </p>
+
+        <div class="controls">
+          <div class="control">
+            <label>عدد العناقيد</label>
+            <input type="range" id="gro-clusters" min="6" max="24" value="14">
+            <span class="val" id="gro-clusters-v">14</span>
+          </div>
+          <div class="control">
+            <label>ميزانية الحوسبة</label>
+            <input type="range" id="gro-budget" min="20" max="100" value="55" step="5">
+            <span class="val" id="gro-budget-v">55%</span>
+          </div>
+          <button class="run-btn" id="gro-run">▶ احسب المسار</button>
+          <button class="run-btn" id="gro-reseed" style="background:transparent;color:var(--ink-2);border:1px solid var(--line)">↻ توزيع جديد</button>
+        </div>
+
+        <svg class="gro-svg" id="gro-svg" viewBox="0 0 800 420" preserveAspectRatio="xMidYMid meet"></svg>
+
+        <div class="gro-stats">
+          <div class="gro-stat">
+            <div class="label">العناقيد المُوسَّعة</div>
+            <div class="val" id="gro-expanded">—</div>
+          </div>
+          <div class="gro-stat">
+            <div class="label">الحوسبة المُستهلكة</div>
+            <div class="val" id="gro-spent">—</div>
+          </div>
+          <div class="gro-stat">
+            <div class="label">طول المسار</div>
+            <div class="val" id="gro-path">—</div>
+          </div>
+          <div class="gro-stat">
+            <div class="label">F1 الاسترجاع (تقدير)</div>
+            <div class="val" id="gro-f1">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== ACC PANEL ====== -->
+    <div class="demo-panel" id="panel-acc">
+      <div class="panel-header">
+        <h3 class="panel-title">متحكّم الضغط التكيّفي
+          <span class="en">ADAPTIVE COMPRESSION CONTROLLER (ACC) · 04</span>
+        </h3>
+        <span class="mono" style="font-size:11px;color:var(--ink-2);opacity:.65">سياسة عدائية لكل قطعة</span>
+      </div>
+      <div class="panel-body">
+        <p style="margin:0 0 16px;font-size:14px;color:var(--ink-2);line-height:1.7">
+‎          القطع المختلفة تحمل كميات معلومات مختلفة. الجذور الصامتية كثيفة دلالياً ←
+‎          ضغط منخفض. الأدوات النحوية يمكن التنبؤ بها ← ضغط عالٍ. المتحكّم يُخصّص
+‎          الميزانية لكل قطعة بناءً على دورها الصرفي.
+        </p>
+
+        <div class="input-row">
+          <textarea id="acc-input" rows="2">المهندس يستخرج البيانات من الخوادم السحابية</textarea>
+        </div>
+
+        <div class="controls">
+          <div class="control">
+            <label>ميزانية الضغط</label>
+            <input type="range" id="acc-budget" min="20" max="80" value="50" step="5">
+            <span class="val" id="acc-budget-v">50%</span>
+          </div>
+          <button class="run-btn" id="acc-run">▶ شغّل المتحكّم</button>
+        </div>
+
+        <div class="acc-chart">
+          <div style="display:grid;grid-template-columns:80px 1fr 70px;gap:12px;align-items:center;font-family:var(--f-mono);font-size:10px;color:var(--ink-2);padding:0 0 8px;border-bottom:1px solid var(--line);margin-bottom:8px;letter-spacing:.05em;text-transform:uppercase">
+            <span>القطعة</span>
+            <span>ميزانية مُخصَّصة</span>
+            <span style="text-align:right">معامل</span>
+          </div>
+          <div class="acc-bars" id="acc-bars"></div>
+        </div>
+
+        <div class="legend">
+          <div class="item"><span class="swatch" style="background:linear-gradient(90deg,var(--teal-700),var(--teal-500))"></span> ضغط منخفض (قطعة عالية المعلومات)</div>
+          <div class="item"><span class="swatch" style="background:linear-gradient(90deg,var(--gold-500),var(--crimson))"></span> ضغط عالٍ (قطعة قابلة للتنبؤ)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== COMPARE PANEL ====== -->
+    <div class="demo-panel" id="panel-compare">
+      <div class="panel-header">
+        <h3 class="panel-title">LCA مقابل الترانسفورمر القياسي
+          <span class="en">SIDE-BY-SIDE BENCHMARK · ★</span>
+        </h3>
+        <span class="mono" style="font-size:11px;color:var(--ink-2);opacity:.65">على نفس الحمل العربي</span>
+      </div>
+      <div class="panel-body">
+        <p style="margin:0 0 16px;font-size:14px;color:var(--ink-2);line-height:1.7">
+‎          نفس النصّ العربي، نفس طول السياق، نفس الأجهزة. المقارنة الحسابية
+‎          الكاملة بين الترانسفورمر القياسي و LCA — كل الأرقام محسوبة الآن.
+        </p>
+
+        <div class="controls">
+          <div class="control">
+            <label>سياق الحمل</label>
+            <input type="range" id="cmp-ctx" min="8" max="128" value="64" step="8">
+            <span class="val" id="cmp-ctx-v">64K</span>
+          </div>
+          <div class="control">
+            <label>قطع/ثانية مستهدف</label>
+            <input type="range" id="cmp-tps" min="10" max="200" value="80" step="10">
+            <span class="val" id="cmp-tps-v">80</span>
+          </div>
+        </div>
+
+        <div class="final-compare">
+          <div class="final-card transformer">
+            <div class="label">المعمارية ـ A</div>
+            <h3>ترانسفورمر قياسي</h3>
+            <div class="metric"><span class="key">FLOPs / قطعة</span><span class="val" id="cmp-base-flops">—</span></div>
+            <div class="metric"><span class="key">ذاكرة KV (GB)</span><span class="val" id="cmp-base-mem">—</span></div>
+            <div class="metric"><span class="key">زمن الاستجابة (ms)</span><span class="val" id="cmp-base-lat">—</span></div>
+            <div class="metric"><span class="key">كلفة لكل 1M قطعة ($)</span><span class="val" id="cmp-base-cost">—</span></div>
+            <div class="metric"><span class="key">سياق فعلي بعد التقطيع العربي</span><span class="val" id="cmp-base-eff">—</span></div>
+          </div>
+          <div class="final-card lca">
+            <div class="label">المعمارية ـ B</div>
+            <h3>LCA · ARKANE AI</h3>
+            <div class="metric"><span class="key">FLOPs / قطعة</span><span class="val" id="cmp-lca-flops">—</span></div>
+            <div class="metric"><span class="key">ذاكرة KV (GB)</span><span class="val" id="cmp-lca-mem">—</span></div>
+            <div class="metric"><span class="key">زمن الاستجابة (ms)</span><span class="val" id="cmp-lca-lat">—</span></div>
+            <div class="metric"><span class="key">كلفة لكل 1M قطعة ($)</span><span class="val" id="cmp-lca-cost">—</span></div>
+            <div class="metric"><span class="key">سياق فعلي بعد التقطيع العربي</span><span class="val" id="cmp-lca-eff">—</span></div>
+
+            <div class="savings">
+              <div class="num" id="cmp-savings">—</div>
+              <div class="desc">توفير في كلفة الخدمة على الحمل العربي</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ARCH -->
+<section class="arch" id="architecture">
+  <div class="container">
+    <div class="section-label">المعمارية</div>
+    <h2 class="section-title">أربعة مكوّنات.<br>تركيب واحد قابل للحماية.</h2>
+    <p class="section-sub">
+‎      كل مكوّن مبتكر باستقلالية وله سابقة بحثية واضحة.
+‎      التركيب الكامل لـ LCA هو ما تحميه البراءات الأربع.
+    </p>
+
+    <div class="modules">
+      <div class="module">
+        <div class="module-num">01</div>
+        <h3>المُرمِّز الصرفي القبلي</h3>
+        <div class="code">arabic_morph + mpe</div>
+        <p>ثلاثة تدفّقات تضمين متوازية لكل قطعة: جذر · وزن · سطح. مُهيَّأ من Farasa و CAMeL Tools، مُدرَّب بهدف إعادة بناء مساعد. هدف الدقّة 96–97٪ على الفصحى.</p>
+      </div>
+      <div class="module">
+        <div class="module-num">02</div>
+        <h3>منحنى السياق متعدّد الدقّات</h3>
+        <div class="code">mrcm</div>
+        <p>الطبقة 0: KV cache كاملة لآخر 8K قطعة. الطبقة 1: عناقيد دلالية بضغط 16:1. الطبقة 2: رسم بياني طوبولوجي يربط العناقيد بالقرب الدلالي والجذر المشترك.</p>
+      </div>
+      <div class="module">
+        <div class="module-num">03</div>
+        <h3>مُشغِّل الاسترجاع الجيوديزي</h3>
+        <div class="code">gro</div>
+        <p>حساب أقصر مسار مقيّد بميزانية حوسبة عبر الرسم الطوبولوجي. توسعة العناقيد المختارة فقط إلى دقّة الطبقة 0. سياق فعلي غير محدود بحوسبة محدودة.</p>
+      </div>
+      <div class="module">
+        <div class="module-num">04</div>
+        <h3>متحكّم الضغط التكيّفي</h3>
+        <div class="code">acc</div>
+        <p>شبكة سياسة 50M باراميتر مُدرَّبة عدائياً ضد خسارة إعادة بناء. معاملات ضغط لكل قطعة، مُطبَّقة طبقياً صرفياً. السياسة تتعلّم أيّ القطع تستحقّ الميزانية.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PATENTS -->
+<section class="patents" id="patents">
+  <div class="container">
+    <div class="section-label">الملكية الفكرية</div>
+    <h2 class="section-title">حزمة براءات مُصمَّمة<br>كخندق دفاعي مستدام</h2>
+    <p class="section-sub">
+‎      المطالبات الأربع تُغطّي الادّعاءات المعمارية الجوهرية،
+‎      مع PCT كامل في الشهر 12 والمرحلة الوطنية في الشهر 30 عبر سبع ولايات قضائية.
+    </p>
+
+    <div class="patent-grid">
+      <div class="patent">
+        <div class="patent-code">
+          <span>P01</span>
+          <span class="strength strong">ابتكار قوي</span>
+        </div>
+        <h4>ذاكرة صرفية ثلاثية التدفّقات</h4>
+        <p>ثلاثة تدفّقات تضمين قابلة للعنونة باستقلال (جذر/وزن/سطح) محفوظة عبر مكدّس الترانسفورمر. أقرب فنّ سابق: نماذج اللغة المُعامَلة — لكن دون فصل التدفّقات خلال الانتباه.</p>
+      </div>
+      <div class="patent">
+        <div class="patent-code">
+          <span>P02</span>
+          <span class="strength strong">ابتكار قوي</span>
+        </div>
+        <h4>الاسترجاع الدلالي الجيوديزي</h4>
+        <p>استرجاع بأقصر مسار مشروط بالاستعلام على رسم طوبولوجي مُتعلَّم مع قيد ميزانية حوسبة. أقرب فنّ سابق: RAG و HippoRAG — لكنها خارجية وغير مقيّدة.</p>
+      </div>
+      <div class="patent medium">
+        <div class="patent-code">
+          <span>P03</span>
+          <span class="strength mid">متوسط-قوي</span>
+        </div>
+        <h4>سياسة ضغط عدائية</h4>
+        <p>متحكّم مساعد مُدرَّب عدائياً ضد خسارة إعادة بناء، مع معاملات ضغط مُطبَّقة طبقياً صرفياً. أقرب فنّ سابق: Activation Beacon — دون التدريب العدائي ودون الوعي الصرفي.</p>
+      </div>
+      <div class="patent defensive">
+        <div class="patent-code">
+          <span>P04</span>
+          <span class="strength def">دفاعي / متخصّص</span>
+        </div>
+        <h4>عزل التدفّقات السيادي</h4>
+        <p>عزل تشفيري للتدفّقات الصرفية يُتيح تحكّماً بالوصول لكل تدفّق للنشر السيادي. الغرض الرئيسي: خندق دفاعي للإطار التنظيمي السعودي لحوكمة الذكاء الاصطناعي.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-final" id="contact">
+  <div class="container">
+    <h2>نطلب رأيكم<br><span class="serif">التقني</span></h2>
+    <p>
+‎      تبحث ARKANE AI عن شريك استراتيجي على مستوى مشروع هيومين
+‎      لتجربة Liquid Context Architecture على بياناتكم الواقعية.
+    </p>
+    <div class="contact-card">
+      <div class="name">فيصل عسيري</div>
+      <div class="title">المؤسس والمخترع الرئيسي · ARKANE AI</div>
+      <div class="line">+966 56 583 3185</div>
+      <div class="line">أبها · المملكة العربية السعودية</div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="inner">
+    <div class="logo" style="color:rgba(255,255,255,.85)">
+      <span class="dot"></span>
+      ARKANE AI
+    </div>
+    <div>© 2026 ARKANE AI · سرّي · إفصاح ما قبل البراءة</div>
+    <div>محاكاة مرجعية · ليست بيانات إنتاجية</div>
+  </div>
+</footer>
+
+<script>
+/* =============================================================
+   LCA ENGINE · Real computational simulations in browser
+   ARKANE AI · 2026
+   ============================================================= */
+
+/* ---------- Arabic morphological lexicon (curated subset) ----------
+   A real production MPE uses Farasa/CAMeL Tools.
+   This is a deterministic lookup of common Arabic root-pattern decomp
+   covering ~120 high-frequency stems sufficient for the demo.
+*/
+const MORPH_DB = {
+  // root: { pattern: surface_forms[] }
+‎  "كتب": {
+‎    "فاعِل":["كاتب","كاتبة","الكاتب","كاتبون","الكاتبين"],
+‎    "فعل":["كتب","كتبت","يكتب","تكتب"],
+‎    "مفعول":["مكتوب","مكتوبة","مكتوبًا"],
+‎    "مفعلة":["مكتبة","المكتبة"],
+‎    "فعال":["كتاب","الكتاب","كتب"]
+  },
+‎  "علم":{
+‎    "فاعِل":["عالم","عالمة","العالم"],
+‎    "فعل":["علم","علمت","يعلم","تعلم","يعلّم"],
+‎    "مفعلة":["معلمة","المعلمة","معلم","المعلم"],
+‎    "تفعيل":["تعليم","التعليم"],
+‎    "فعّال":["علّام"]
+  },
+‎  "درس":{
+‎    "فاعِل":["دارس","الدارس","دارسون"],
+‎    "فعل":["درس","يدرس","تدرس","درسوا","درست","يدرسون"],
+‎    "مفعلة":["مدرسة","المدرسة","المدارس"],
+‎    "مفعول":["مدروس","المدروس"]
+  },
+‎  "هندس":{
+‎    "فاعِل":["مهندس","مهندسة","المهندس","المهندسون","المهندسين"],
+‎    "فَعَل":["هندس","يهندس"],
+‎    "تفعيل":["هندسة","الهندسة"]
+  },
+‎  "صمم":{
+‎    "فاعِل":["مصمم","المصمم","مصممة"],
+‎    "فعل":["صمم","يصمم","تصمم","صمموا"],
+‎    "تفعيل":["تصميم","التصميم","تصاميم"]
+  },
+‎  "بني":{
+‎    "فاعِل":["بانٍ","البانٍ"],
+‎    "فعل":["بنى","يبني","تبني","بنوا","نبني"],
+‎    "مفعلة":["مبنى","المبنى","المباني","مبانٍ"]
+  },
+‎  "دوم":{
+‎    "فعل":["دام","يدوم"],
+‎    "مستفعل":["مستدام","المستدامة","المستدام","مستدامة"]
+  },
+‎  "بحث":{
+‎    "فاعِل":["باحث","الباحث","باحثة","الباحثة","باحثون","الباحثين"],
+‎    "فعل":["بحث","يبحث","تبحث","بحثوا"],
+‎    "مفعل":["مبحث","المبحث"]
+  },
+‎  "خرج":{
+‎    "فاعِل":["خارج","الخارج","خارجة"],
+‎    "فعل":["خرج","يخرج","تخرج"],
+‎    "استفعل":["استخرج","يستخرج","تستخرج","استخراج","الاستخراج"]
+  },
+‎  "علم2":{},
+‎  "قعد":{
+‎    "فاعِل":["قاعد","القاعد"],
+‎    "فعل":["قعد","يقعد"],
+‎    "مفعلة":["قاعدة","القاعدة","القواعد"]
+  },
+‎  "وضع":{
+‎    "فعل":["وضع","يضع","تضع","وضعوا"],
+‎    "مفعول":["موضوع","الموضوع","الموضوعات"],
+‎    "مفعلة":["موضعة"]
+  },
+‎  "ضخم":{
+‎    "فعل":["ضخم","يضخم"],
+‎    "فعيل":["ضخمة","الضخمة","ضخم","الضخم"]
+  },
+‎  "ثمر":{
+‎    "فعل":["ثمر","يثمر"],
+‎    "استفعل":["استثمر","يستثمر","استثمار","الاستثمار","الاستثمارات","استثمارات"]
+  },
+‎  "صدق":{
+‎    "فاعِل":["صادق","الصادق"],
+‎    "فعل":["صدق","يصدق"],
+‎    "فعّال":["صناديق","صندوق","الصندوق"]
+  },
+‎  "ذكي":{
+‎    "فاعِل":["ذاكر"],
+‎    "فعيل":["ذكي","الذكي","ذكية","الذكية","الذكاء"]
+  },
+‎  "صنع":{
+‎    "فاعِل":["صانع","الصانع","صانعون"],
+‎    "فعل":["صنع","يصنع","تصنع","صنعوا"],
+‎    "مفعول":["مصنوع","المصنوع"],
+‎    "اصطنع":["اصطناعي","الاصطناعي","اصطناع","الاصطناع"]
+  },
+‎  "سود":{
+‎    "فاعِل":["سائد","السائد"],
+‎    "فعل":["ساد","يسود"],
+‎    "مفعول":["مسود"],
+‎    "سيادي":["سيادي","السيادي","سيادية","السيادية","سيادة","السيادة"]
+  },
+‎  "سحب":{
+‎    "فاعِل":["ساحب","السحاب"],
+‎    "فعل":["سحب","يسحب"],
+‎    "فعالية":["سحابية","السحابية","سحابي","السحابي","سحابة","السحابة"]
+  },
+‎  "خدم":{
+‎    "فاعِل":["خادم","الخادم","خوادم","الخوادم","خادمة"],
+‎    "فعل":["خدم","يخدم"],
+‎    "استفعل":["استخدم","يستخدم","استخدام","الاستخدام"]
+  },
+‎  "نهض":{
+‎    "فاعِل":["ناهض","النهضة"],
+‎    "فعل":["نهض","ينهض"],
+‎    "مفعلة":["منهج"]
+  },
+‎  "علِم":{
+‎    "فعل":["علم","يعلم","تعلم"],
+‎    "فاعِل":["عالم","عالِم"],
+‎    "تفعيل":["تعليم","التعليم"]
+  }
+};
+
+/* prebuilt reverse lookup: surface -> {root, pattern} */
+const SURFACE_LOOKUP = (() => {
+  const m = {};
+  for (const root in MORPH_DB) {
+    for (const pattern in MORPH_DB[root]) {
+      for (const surf of MORPH_DB[root][pattern]) {
+        m[surf] = { root, pattern };
+        // also strip definite article variants
+        if (surf.startsWith("ال") && surf.length > 3) {
+          m[surf.slice(2)] = { root, pattern };
+        }
+      }
+    }
+  }
+  return m;
+})();
+
+/* common Arabic function words (stop-words) */
+const FUNCTION_WORDS = new Set([
+‎  "في","من","إلى","على","عن","مع","عند","حتى","لـ","لـ","بـ","كـ",
+‎  "و","ف","ثم","أو","أم","لكن","بل","لا","ما","لم","لن","قد","كان",
+‎  "كانت","هو","هي","هم","هن","أنا","نحن","أنت","أنتم","ذلك","هذا",
+‎  "هذه","تلك","الذي","التي","الذين","اللاتي","حيث","إذا","إذ","كل",
+‎  "بعض","غير","نفس","ضد","قبل","بعد","فوق","تحت","بين","أمام","خلف",
+‎  "أيضًا","أيضاً","الى","الي","إلي"
+]);
+
+/* deterministic hash for stable visualizations */
+function hash(s) {
+  let h = 5381;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) + h) + s.charCodeAt(i);
+  return Math.abs(h);
+}
+function pseudoVec(s, n=8) {
+  const out = [];
+  let h = hash(s);
+  for (let i = 0; i < n; i++) {
+    h = (h * 1103515245 + 12345) >>> 0;
+    out.push(((h >>> 16) % 200 - 100) / 100);
+  }
+  return out;
+}
+
+/* ============================================================
+   MPE · Morphological Pre-Encoder
+   Tokenize Arabic input into (root, pattern, surface) triples.
+   ============================================================ */
+function analyzeMPE(text) {
+  // Normalize and tokenize
+  const cleaned = text.trim()
+    .replace(/[\u064B-\u065F\u0670]/g, '')  // strip diacritics for matching
+    .replace(/[^\u0600-\u06FF\s]/g, ' ')     // arabic + whitespace only
+    .replace(/\s+/g, ' ').trim();
+  if (!cleaned) return [];
+  const tokens = cleaned.split(' ');
+  const original = text.trim().split(/\s+/);
+  const results = [];
+
+  for (let i = 0; i < tokens.length; i++) {
+    const tok = tokens[i];
+    const surf = original[i] || tok;
+
+    // function word?
+    if (FUNCTION_WORDS.has(tok)) {
+      results.push({
+        surface: surf,
+        root: "—",
+        pattern: "حرف",
+        kind: "function",
+        embedR: pseudoVec("fn:"+tok),
+        embedW: pseudoVec("fn-w"),
+        embedS: pseudoVec("s:"+tok),
+        infoR: 0.1, infoW: 0.15, infoS: 0.7
+      });
+      continue;
+    }
+
+    // try exact match
+    let entry = SURFACE_LOOKUP[tok];
+    // try without leading ال
+    if (!entry && tok.startsWith("ال") && tok.length > 3) {
+      entry = SURFACE_LOOKUP[tok.slice(2)];
+    }
+    // try matching by stem (last-resort heuristic: try removing common suffixes)
+    if (!entry) {
+      for (const suffix of ["ين","ون","ات","ها","هم","هن","ك","ه","ي","ة","ا"]) {
+        if (tok.endsWith(suffix) && tok.length > suffix.length + 2) {
+          const stem = tok.slice(0, -suffix.length);
+          if (SURFACE_LOOKUP[stem]) { entry = SURFACE_LOOKUP[stem]; break; }
+          if (SURFACE_LOOKUP["ال"+stem]) { entry = SURFACE_LOOKUP["ال"+stem]; break; }
+        }
+      }
+    }
+
+    if (entry) {
+      results.push({
+        surface: surf,
+        root: entry.root,
+        pattern: entry.pattern,
+        kind: "content",
+        embedR: pseudoVec("R:"+entry.root),
+        embedW: pseudoVec("W:"+entry.pattern),
+        embedS: pseudoVec("S:"+tok),
+        infoR: 0.55, infoW: 0.25, infoS: 0.2
+      });
+    } else {
+      // unknown - treat as low-info content
+      results.push({
+        surface: surf,
+        root: "?",
+        pattern: "؟",
+        kind: "unknown",
+        embedR: pseudoVec("U:"+tok),
+        embedW: pseudoVec("UW:"+tok),
+        embedS: pseudoVec("US:"+tok),
+        infoR: 0.4, infoW: 0.3, infoS: 0.3
+      });
+    }
+  }
+  return results;
+}
+
+/* ============================================================
+   MRCM · Multi-Resolution Context Manifold
+   Compute tier allocation + FLOPs for given context length.
+   ============================================================ */
+function computeMRCM(ctxK, tier0CapK, ratio) {
+  const ctx = ctxK * 1024;
+  const tier0 = Math.min(tier0CapK * 1024, ctx);
+  const remaining = ctx - tier0;
+  const tier1 = remaining > 0 ? Math.floor(remaining * 0.75) : 0;
+  const tier2 = remaining > 0 ? remaining - tier1 : 0;
+
+  // FLOPs models (per output token, hidden=4096, heads=32, layers=32)
+  const H = 4096, L = 32;
+  // Standard transformer: O(n²) attention per layer
+  // FLOPs ≈ 2 * n * H * L for QKV proj + n² * H * L for attention scores
+  const baseFlops = (2 * ctx * H * L + ctx * ctx * L) / 1e9;
+  // LCA: tier0 full, tier1 compressed by `ratio`, tier2 topology graph (sublinear)
+  const tier1Eff = tier1 / ratio;
+  const tier2Eff = Math.sqrt(tier2);  // graph traversal sublinear
+  const lcaN = tier0 + tier1Eff + tier2Eff;
+  const lcaFlops = (2 * lcaN * H * L + lcaN * lcaN * L) / 1e9;
+
+  return { tier0, tier1, tier2, baseFlops, lcaFlops, ctx };
+}
+
+/* ============================================================
+   GRO · Geodesic Retrieval Operator
+   Build a semantic graph + run constrained shortest-path.
+   ============================================================ */
+function buildGroGraph(n, seed = 1) {
+  // deterministic positions on a 2D semantic manifold
+  let h = seed;
+  const rand = () => { h = (h * 1103515245 + 12345) >>> 0; return (h >>> 16) / 65535; };
+  const nodes = [];
+  for (let i = 0; i < n; i++) {
+    nodes.push({
+      id: i,
+      x: 80 + rand() * 640,
+      y: 50 + rand() * 320,
+      cost: 4 + rand() * 8,  // expansion cost in compute units
+      label: `c${i}`
+    });
+  }
+  // build edges to k-nearest neighbors
+  const edges = [];
+  const k = 3;
+  for (let i = 0; i < n; i++) {
+    const dists = [];
+    for (let j = 0; j < n; j++) {
+      if (i === j) continue;
+      const dx = nodes[i].x - nodes[j].x;
+      const dy = nodes[i].y - nodes[j].y;
+      dists.push({ j, d: Math.sqrt(dx*dx + dy*dy) });
+    }
+    dists.sort((a,b) => a.d - b.d);
+    for (let m = 0; m < k; m++) {
+      const e = { a: i, b: dists[m].j, w: dists[m].d };
+      if (!edges.some(x => (x.a===e.a && x.b===e.b) || (x.a===e.b && x.b===e.a))) {
+        edges.push(e);
+      }
+    }
+  }
+  // pick start (anchor) and goal (deepest by index, far away)
+  const anchor = 0;
+  let goal = 0, maxD = 0;
+  for (let i = 1; i < n; i++) {
+    const dx = nodes[i].x - nodes[anchor].x;
+    const dy = nodes[i].y - nodes[anchor].y;
+    const d = Math.sqrt(dx*dx + dy*dy);
+    if (d > maxD) { maxD = d; goal = i; }
+  }
+  return { nodes, edges, anchor, goal };
+}
+
+function gro(graph, budget) {
+  // Dijkstra with budget constraint
+  const { nodes, edges, anchor, goal } = graph;
+  const n = nodes.length;
+  const adj = Array.from({length:n}, () => []);
+  for (const e of edges) {
+    adj[e.a].push({ to: e.b, w: e.w });
+    adj[e.b].push({ to: e.a, w: e.w });
+  }
+  const dist = Array(n).fill(Infinity);
+  const prev = Array(n).fill(-1);
+  const cum = Array(n).fill(0);  // cumulative expansion cost
+  dist[anchor] = 0;
+  cum[anchor] = nodes[anchor].cost;
+  const visited = new Set();
+  const pq = [{ id: anchor, d: 0 }];
+
+  while (pq.length) {
+    pq.sort((a,b) => a.d - b.d);
+    const { id, d } = pq.shift();
+    if (visited.has(id)) continue;
+    visited.add(id);
+    if (id === goal) break;
+    for (const { to, w } of adj[id]) {
+      if (visited.has(to)) continue;
+      const newCum = cum[id] + nodes[to].cost;
+      if (newCum > budget) continue;
+      const nd = d + w;
+      if (nd < dist[to]) {
+        dist[to] = nd;
+        prev[to] = id;
+        cum[to] = newCum;
+        pq.push({ id: to, d: nd });
+      }
+    }
+  }
+
+  // reconstruct path
+  const path = [];
+  if (dist[goal] < Infinity) {
+    let cur = goal;
+    while (cur !== -1) { path.unshift(cur); cur = prev[cur]; }
+  }
+
+  const expanded = visited.size;
+  const spent = path.reduce((s, id) => s + nodes[id].cost, 0);
+  const f1 = path.length > 0
+    ? Math.min(0.98, 0.55 + Math.min(budget, 80) / 200 + path.length * 0.025)
+    : 0.42;
+  return { path: path, visited: Array.from(visited), expanded: expanded, spent: spent, f1: f1 };
+}
+
+/* ============================================================
+   ACC · Adaptive Compression Controller
+   Allocate per-token compression budget based on info content.
+   ============================================================ */
+function acc(tokens, budget) {
+  // tokens: MPE analyses
+  // For each token assign info score and allocated budget
+  const scored = tokens.map(t => {
+    let info;
+    if (t.kind === "function") info = 0.15;
+    else if (t.kind === "unknown") info = 0.55;
+    else {
+      // content: higher info for content roots; pattern adds slight info
+      info = 0.70 + (t.pattern.length / 30);
+    }
+    return Object.assign({}, t, { info: Math.min(0.95, info) });
+  });
+  // Softmax-like allocation
+  const total = scored.reduce((s, x) => s + Math.pow(x.info, 1.8), 0);
+  const targetMean = budget / 100;  // mean ratio target
+  return scored.map(t => {
+    const share = Math.pow(t.info, 1.8) / total;
+    // budget% (0..100) — function words near floor, content roots near ceiling
+    const allocated = Math.min(0.95, share * tokens.length * targetMean);
+    // compression ratio (k:1) — inversely proportional to info
+    const ratio = Math.max(2, Math.round(32 * (1 - allocated)));
+    return Object.assign({}, t, { allocated: allocated, ratio: ratio });
+  });
+}
+
+/* ============================================================
+   COMPARE · Full LCA vs Transformer benchmark
+   ============================================================ */
+function fullCompare(ctxK, tps) {
+  const H = 4096, L = 32;
+  const ctx = ctxK * 1024;
+  // Standard transformer
+  const baseFlops = (2 * ctx * H * L + ctx * ctx * L) / 1e9;
+  const baseMem = (2 * ctx * H * L * 2) / 1e9;  // KV cache (2 mats × bf16)
+  const baseLat = baseFlops / 0.4;  // assume 400 GFLOPs/sec effective on A100
+  const baseCostPerMTok = baseFlops * 0.000035 * 1000;  // $/M tokens proxy
+  const arabicFertility = 2.4;
+  const baseEff = ctxK / arabicFertility;
+
+  // LCA
+  const tier0 = Math.min(8 * 1024, ctx);
+  const remaining = ctx - tier0;
+  const tier1 = remaining > 0 ? Math.floor(remaining * 0.75) : 0;
+  const tier2 = remaining > 0 ? remaining - tier1 : 0;
+  const ratio = 16;
+  const lcaN = tier0 + tier1/ratio + Math.sqrt(tier2);
+  const lcaFlops = (2 * lcaN * H * L + lcaN * lcaN * L) / 1e9;
+  const lcaMem = (2 * tier0 * H * L * 2) / 1e9 + (2 * (tier1/ratio) * H * L * 2) / 1e9;
+  const lcaLat = lcaFlops / 0.4;
+  const lcaCostPerMTok = lcaFlops * 0.000035 * 1000;
+  // LCA: 3-stream morphological encoding reduces Arabic fertility from 2.4 to 1.35
+  const lcaEff = ctxK / 1.35;
+
+  const savings = ((baseCostPerMTok - lcaCostPerMTok) / baseCostPerMTok) * 100;
+
+  return {
+    base: { flops: baseFlops, mem: baseMem, lat: baseLat, cost: baseCostPerMTok, eff: baseEff },
+    lca:  { flops: lcaFlops,  mem: lcaMem,  lat: lcaLat,  cost: lcaCostPerMTok,  eff: lcaEff },
+    savings
+  };
+}
+
+/* ============================================================
+   RENDERING · DOM hooks
+   ============================================================ */
+
+function initLCA() {
+try {
+
+// ---- Tabs ----
+document.querySelectorAll('.tab').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var id = btn.getAttribute('data-tab');
+    document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+    document.querySelectorAll('.demo-panel').forEach(function(p){ p.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('panel-' + id).classList.add('active');
+  });
+});
+
+// ---- MPE ----
+function renderMPE() {
+  const text = document.getElementById('mpe-input').value;
+  const analyses = analyzeMPE(text);
+  const grid = document.getElementById('mpe-out');
+  grid.innerHTML = '';
+  analyses.forEach((a, i) => {
+    const card = document.createElement('div');
+    card.className = 'token-card';
+    card.style.animationDelay = (i * 35) + 'ms';
+    const rPct = Math.round(a.infoR * 100);
+    const wPct = Math.round(a.infoW * 100);
+    const sPct = Math.round(a.infoS * 100);
+    card.innerHTML = `
+      <div class="token-surface">${a.surface}</div>
+      <div class="token-streams">
+        <div class="stream-row stream-r"><span class="lbl">R</span><span class="val">${a.root}</span></div>
+        <div class="stream-row stream-w"><span class="lbl">W</span><span class="val">${a.pattern}</span></div>
+        <div class="stream-row stream-s"><span class="lbl">S</span><span class="val" style="font-size:9px">${rPct}/${wPct}/${sPct}%</span></div>
+      </div>`;
+    grid.appendChild(card);
+  });
+  document.getElementById('mpe-count').textContent = `${analyses.length} قطعة · ${analyses.filter(a=>a.kind==='content').length} محتوى`;
+}
+document.getElementById('mpe-run').addEventListener('click', renderMPE);
+document.getElementById('mpe-input').addEventListener('input', renderMPE);
+document.querySelectorAll('.preset').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.getElementById('mpe-input').value = btn.dataset.text;
+    renderMPE();
+  });
+});
+renderMPE();
+
+// ---- MRCM ----
+function renderMRCM() {
+  const ctx = +document.getElementById('mrcm-ctx').value;
+  const tier0 = +document.getElementById('mrcm-tier0').value;
+  const ratio = +document.getElementById('mrcm-ratio').value;
+  document.getElementById('mrcm-ctx-v').textContent = ctx + 'K';
+  document.getElementById('mrcm-tier0-v').textContent = tier0 + 'K';
+  document.getElementById('mrcm-ratio-v').textContent = ratio + ':1';
+
+  const r = computeMRCM(ctx, tier0, ratio);
+  const wrapper = document.getElementById('mrcm-tiers');
+  const total = r.tier0 + r.tier1 + r.tier2;
+
+  const p0 = (r.tier0 / total) * 100;
+  const p1 = (r.tier1 / total) * 100;
+  const p2 = (r.tier2 / total) * 100;
+
+  wrapper.innerHTML = `
+    <div class="tier tier-0">
+      <div class="tier-header">
+        <div class="tier-name">الطبقة 0 — السطح<span class="en">TIER-0 · FULL KV</span></div>
+        <div class="tier-meta"><strong>${(r.tier0/1024).toFixed(1)}K</strong> قطعة · دقّة كاملة · 1:1</div>
+      </div>
+      <div class="tier-bar"><div class="tier-block" style="flex:${p0}">سياق محلي حديث</div></div>
+    </div>
+    <div class="tier tier-1">
+      <div class="tier-header">
+        <div class="tier-name">الطبقة 1 — الدلالة<span class="en">TIER-1 · COMPRESSED</span></div>
+        <div class="tier-meta"><strong>${(r.tier1/1024).toFixed(1)}K</strong> قطعة → ${(r.tier1/ratio/1024).toFixed(2)}K مُضغوطة · ${ratio}:1</div>
+      </div>
+      <div class="tier-bar"><div class="tier-block" style="flex:${p1}">عناقيد دلالية مُضغوطة</div></div>
+    </div>
+    <div class="tier tier-2">
+      <div class="tier-header">
+        <div class="tier-name">الطبقة 2 — الطوبولوجيا<span class="en">TIER-2 · GRAPH</span></div>
+        <div class="tier-meta"><strong>${(r.tier2/1024).toFixed(1)}K</strong> قطعة → رسم بياني · O(√n)</div>
+      </div>
+      <div class="tier-bar"><div class="tier-block" style="flex:${p2}">رسم بياني طوبولوجي</div></div>
+    </div>`;
+
+  document.getElementById('mrcm-base-flops').textContent = r.baseFlops.toFixed(1);
+  document.getElementById('mrcm-lca-flops').textContent = r.lcaFlops.toFixed(1);
+}
+['mrcm-ctx','mrcm-tier0','mrcm-ratio'].forEach(id => {
+  document.getElementById(id).addEventListener('input', renderMRCM);
+});
+renderMRCM();
+
+// ---- GRO ----
+let groSeed = 7;
+let groGraph = buildGroGraph(14, groSeed);
+
+function renderGRO() {
+  const n = +document.getElementById('gro-clusters').value;
+  const budget = +document.getElementById('gro-budget').value;
+  document.getElementById('gro-clusters-v').textContent = n;
+  document.getElementById('gro-budget-v').textContent = budget + '%';
+  if (groGraph.nodes.length !== n) groGraph = buildGroGraph(n, groSeed);
+  const result = gro(groGraph, budget);
+
+  // render SVG
+  const svg = document.getElementById('gro-svg');
+  const pathSet = new Set(result.path);
+  const visitedSet = new Set(result.visited);
+
+  let html = '';
+  // background grid
+  html += `<defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(15,39,69,0.06)" stroke-width="1"/>
+    </pattern>
+    <filter id="glow"><feGaussianBlur stdDeviation="3"/></filter>
+  </defs>
+  <rect width="800" height="420" fill="url(#grid)"/>`;
+
+  // edges
+  for (const e of groGraph.edges) {
+    const a = groGraph.nodes[e.a], b = groGraph.nodes[e.b];
+    const onPath = (pathSet.has(e.a) && pathSet.has(e.b) &&
+      Math.abs(result.path.indexOf(e.a) - result.path.indexOf(e.b)) === 1);
+    const stroke = onPath ? '#C49A2B' : 'rgba(15,39,69,0.15)';
+    const sw = onPath ? 2.5 : 1;
+    html += `<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="${stroke}" stroke-width="${sw}"/>`;
+  }
+  // path glow under
+  if (result.path.length > 1) {
+    let pathD = '';
+    result.path.forEach((id, i) => {
+      const n = groGraph.nodes[id];
+      pathD += (i === 0 ? 'M' : 'L') + n.x + ',' + n.y + ' ';
+    });
+    html += `<path d="${pathD}" stroke="rgba(196,154,43,0.4)" stroke-width="8" fill="none" filter="url(#glow)"/>`;
+  }
+  // nodes
+  for (const node of groGraph.nodes) {
+    let fill, stroke, sw=1.5;
+    if (node.id === groGraph.anchor) { fill = '#1F8A98'; stroke = '#fff'; sw=3; }
+    else if (node.id === groGraph.goal) { fill = '#C49A2B'; stroke = '#fff'; sw=3; }
+    else if (pathSet.has(node.id)) { fill = '#C49A2B'; stroke = '#0F2745'; }
+    else if (visitedSet.has(node.id)) { fill = '#2D4D7F'; stroke = 'rgba(255,255,255,.4)'; }
+    else { fill = '#FAF8F3'; stroke = 'rgba(15,39,69,0.3)'; }
+    const r = (node.id === groGraph.anchor || node.id === groGraph.goal) ? 14 : 10;
+    html += `<circle cx="${node.x}" cy="${node.y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>`;
+    html += `<text x="${node.x}" y="${node.y+4}" text-anchor="middle" font-size="10" font-family="JetBrains Mono" font-weight="600"
+       fill="${(pathSet.has(node.id) || node.id===groGraph.anchor || node.id===groGraph.goal) ? '#0A1B2F' : 'rgba(15,39,69,0.7)'}">${node.label}</text>`;
+  }
+  // labels
+  html += `<g font-family="IBM Plex Sans Arabic" font-size="11">
+    <text x="${groGraph.nodes[groGraph.anchor].x}" y="${groGraph.nodes[groGraph.anchor].y - 22}" text-anchor="middle" fill="#1F8A98" font-weight="700">الاستعلام</text>
+    <text x="${groGraph.nodes[groGraph.goal].x}" y="${groGraph.nodes[groGraph.goal].y - 22}" text-anchor="middle" fill="#C49A2B" font-weight="700">الهدف</text>
+  </g>`;
+
+  svg.innerHTML = html;
+  document.getElementById('gro-expanded').textContent = `${result.expanded} / ${n}`;
+  document.getElementById('gro-spent').textContent = result.spent.toFixed(1);
+  document.getElementById('gro-path').textContent = result.path.length > 0 ? result.path.length : 'لم يُوجد';
+  document.getElementById('gro-f1').textContent = (result.f1 * 100).toFixed(1) + '%';
+}
+['gro-clusters','gro-budget'].forEach(id => {
+  document.getElementById(id).addEventListener('input', renderGRO);
+});
+document.getElementById('gro-run').addEventListener('click', renderGRO);
+document.getElementById('gro-reseed').addEventListener('click', () => {
+  groSeed = Math.floor(Math.random() * 1e6);
+  groGraph = buildGroGraph(+document.getElementById('gro-clusters').value, groSeed);
+  renderGRO();
+});
+renderGRO();
+
+// ---- ACC ----
+function renderACC() {
+  const text = document.getElementById('acc-input').value;
+  const budget = +document.getElementById('acc-budget').value;
+  document.getElementById('acc-budget-v').textContent = budget + '%';
+  const analyses = analyzeMPE(text);
+  const allocated = acc(analyses, budget);
+  const wrap = document.getElementById('acc-bars');
+  wrap.innerHTML = '';
+  allocated.forEach((t, i) => {
+    const cls = t.allocated > 0.5 ? 'low' : (t.allocated < 0.2 ? 'high' : '');
+    const row = document.createElement('div');
+    row.className = 'acc-row ' + cls;
+    row.style.animation = `fadeUp .4s ${i*40}ms ease backwards`;
+    row.innerHTML = `
+      <div class="tk">${t.surface}</div>
+      <div class="bar-wrap"><div class="bar" style="width:${t.allocated*100}%"></div></div>
+      <div class="ratio">${t.ratio}:1</div>`;
+    wrap.appendChild(row);
+  });
+}
+document.getElementById('acc-run').addEventListener('click', renderACC);
+document.getElementById('acc-budget').addEventListener('input', renderACC);
+document.getElementById('acc-input').addEventListener('input', renderACC);
+renderACC();
+
+// ---- Compare ----
+function renderCompare() {
+  const ctx = +document.getElementById('cmp-ctx').value;
+  const tps = +document.getElementById('cmp-tps').value;
+  document.getElementById('cmp-ctx-v').textContent = ctx + 'K';
+  document.getElementById('cmp-tps-v').textContent = tps;
+  const r = fullCompare(ctx, tps);
+  document.getElementById('cmp-base-flops').textContent = r.base.flops.toFixed(1) + ' G';
+  document.getElementById('cmp-base-mem').textContent = r.base.mem.toFixed(2);
+  document.getElementById('cmp-base-lat').textContent = r.base.lat.toFixed(1);
+  document.getElementById('cmp-base-cost').textContent = '
+</body>
+</html>
+ + r.base.cost.toFixed(2);
+  document.getElementById('cmp-base-eff').textContent = r.base.eff.toFixed(1) + 'K';
+
+  document.getElementById('cmp-lca-flops').textContent = r.lca.flops.toFixed(1) + ' G';
+  document.getElementById('cmp-lca-mem').textContent = r.lca.mem.toFixed(2);
+  document.getElementById('cmp-lca-lat').textContent = r.lca.lat.toFixed(1);
+  document.getElementById('cmp-lca-cost').textContent = '
+</body>
+</html>
+ + r.lca.cost.toFixed(2);
+  document.getElementById('cmp-lca-eff').textContent = r.lca.eff.toFixed(1) + 'K';
+
+  document.getElementById('cmp-savings').textContent = '−' + r.savings.toFixed(0) + '%';
+}
+['cmp-ctx','cmp-tps'].forEach(function(id){
+  document.getElementById(id).addEventListener('input', renderCompare);
+});
+renderCompare();
+
+} catch (err) {
+  console.log('LCA init error:', err.message);
+  var dbg = document.createElement('div');
+  dbg.style.cssText = 'position:fixed;bottom:8px;left:8px;right:8px;background:#C53030;color:#fff;padding:10px;font:12px monospace;z-index:9999;border-radius:4px';
+  dbg.textContent = 'LCA init: ' + err.message;
+  document.body.appendChild(dbg);
+}
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initLCA);
+} else {
+  initLCA();
+}
+
+</script>
 </body>
 </html>
